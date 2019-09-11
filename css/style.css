@@ -1,0 +1,24 @@
+body
+{
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+canvas
+{
+    background-color: lightblue;
+    width: 100% !important;
+    max-width: 600px;
+    margin: auto;
+    display: block;
+}
+
+/*
+#screen
+{
+    width: 500px;
+    height: 500px;
+}
+*/
