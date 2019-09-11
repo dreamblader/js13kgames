@@ -26,19 +26,45 @@ kontra.load('a.png').then(function()
             width: width
         });
         
-        console.log(runner_sprite.x);
-        console.log(runner_sprite.y);
+    // global mechanic variables
+    var y_origin = runner_sprite.y;
         
         var loop = kontra.GameLoop(
         {
             update: function()
             {
-                if(kontra.keyPressed('up'))
+                if(kontra.keyPressed('up')) // JUMP
                 {
-                    console.log("UP");
-                    jump(runner_sprite);}
-                else if(kontra.keyPressed('down'))
-                {}
+                    jump(runner_sprite);                   
+                }
+                else
+                {
+                    stop_jump();
+                }
+
+                if(kontra.keyPressed('down')) // SLIDE
+                {
+                    console.log(down_score);
+                    down_score++;
+
+                    if(down_score <20)
+                    {
+                        runner_sprite.y = y_origin + 5;
+                    }
+                    else
+                    {
+                        runner_sprite.y = y_origin;
+                    }
+                }
+                else
+                {
+                    //runner_sprite.y = y_origin;
+                    down_score = 0;
+                }
+
+                
+                gravity(runner_sprite);
+                
 
                 runner_sprite.update();
                 ground.update();
