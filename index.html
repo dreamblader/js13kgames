@@ -5,10 +5,19 @@
     </head>
 
     <body>
+
+        <div class="hud">
+            <a>Score: </a>
+            <a id="score">0</a>
+        </div>
         
-        <canvas id="screen"  width= "256"  height="256">
+        <canvas id="screen"  width= "128"  height="128" onkeypress="start_game()">
 
         </canvas>
+
+        <div class="hud">
+            <a id="text-box">TESTING...</a>
+        </div>
 
         <script src="lib/kontra.min.js"></script>
         <script src="src/mechanics.js"></script>
