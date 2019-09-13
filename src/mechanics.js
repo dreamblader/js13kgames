@@ -1,21 +1,4 @@
-// global mechanic variables
-var y_origin;
 
-var gravity_power = 2;
-var jump_power = 6;
-
-var up_score = 0;
-var down_score = 0;
-
-var max_up = 15;
-var max_down = 20;
-
-var spawner_ground;
-var spawner_min;
-var spawner_med;
-var spawner_max;
-
-var game_speed = 1;
 
 function jump(sprite)
 {
@@ -24,6 +7,7 @@ function jump(sprite)
 
     if(up_score < max_up)
     {
+        sprite.playAnimation('jump');
         sprite.y -= jump_power;
     }
 };
@@ -33,8 +17,9 @@ function stop_jump()
     up_score = max_up;
 };
 
-function jump_cooloff()
+function jump_cooloff(sprite)
 {
+   sprite.playAnimation('walk');
    up_score = 0;
 };
 
@@ -56,43 +41,94 @@ function slide()
 
 function spawn_obstacle()
 {
-    var choice = getRandomInt(1,4);
+    var choice = getRandomInt(1,3);
     console.log(choice);
-    var spawn;
+    var image;
+    var offset = 0;
 
     switch (choice) 
     {
         case 1:
-            spawn = spawner_ground;
+            image = kontra.imageAssets.rock;
+            offset = 8;
             break;
         case 2:
-            spawn = spawner_min;
+            image = kontra.imageAssets.cactus;
+            offset = 0;
             break;
         case 3:
-            spawn = spawner_med;
-            break;
-        case 4:
-            spawn = spawner_max;
-            break;    
+            image = kontra.imageAssets.totem;
+            offset = -8;
+            break;   
         default:
             break;
     }
 
     var sprite = kontra.Sprite(
         {
-            x: 0,
-            y: spawn+8,
+            x: -16,
+            y: spawner_ground+offset,
             dx: game_speed,
-            image: kontra.imageAssets.tomato
+            image: image
         });
 
     return sprite;
 }
 
+function count_score(item)
+{
+    var image = item.image;
+
+    switch(image)
+    {
+        case kontra.imageAssets.rock:
+            score+=1;
+            break;
+        case kontra.imageAssets.cactus:
+            score+=3;
+            break;
+        case kontra.imageAssets.totem:
+            score+=5;
+            break;
+    }
+};
+
 function gravity(sprite)
 {
     sprite.y += gravity_power;
 };
+
+function screen_write(num)
+{
+    switch(num)
+    {
+        case 0: // CLEAR SCREEN
+            text_box.innerHTML = "";
+            context.clearRect(0, 0, width, height);
+            break;
+        case 1: // TITLE SCREEN
+            text_box.innerHTML = intro_text;
+            context.fillText("WE MUST ", 20, 50);
+            context.fillText("GO BACK" , 20, 70);
+            break;
+        case 2: // GAME OVER
+            loop.stop();
+            text_box.innerHTML = over_text1+score+over_text2;
+            context.clearRect(0, 0, width, height);
+            context.fillText("GAME ", 33, 50);
+            context.fillText("OVER" , 35, 70);
+            isOver = true;
+            break;
+    }
+}
+
+function reset()
+{
+    score = 0;
+    obstacles = [];
+    loop.start();
+}
+
 
 function getRandomInt(min, max)
 {
@@ -100,4 +136,3 @@ function getRandomInt(min, max)
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-

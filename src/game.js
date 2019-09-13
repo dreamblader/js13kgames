@@ -1,29 +1,48 @@
 kontra.init();
 kontra.initKeys();
 
-var loop;
-var isLoaded = false;
-var obstacles = [];
-var canvas = document.getElementById("screen");
-var score_html = document.getElementById("score");
-var text_box = document.getElementById("text-box");
-var width= canvas.width;
-var height= canvas.height;
-var score = 0;
-var time = 0;
-var spawn_period = 300;
-
 kontra.setImagePath('assets/images');
+kontra.setAudioPath('assets/sounds')
 
-kontra.load('a.png', 'tomato.png').then(function()
+kontra.load('run.png','cactus.png','totem.png','rock.png','jumpbro.mid').then(function()
 {
+    screen_write(1);
 
+    var spriteSheet = kontra.SpriteSheet({
+        image: kontra.imageAssets.run,
+        frameWidth: 16,
+        frameHeight: 15,
+        animations: 
+        {
+            walk: 
+            {
+              frames: '0..1',  
+              frameRate: 10
+            },
+
+            jump:
+            {
+              frames: 0,  
+              frameRate: 30
+            }
+        }
+    });
+
+    /*
     var runner_sprite = kontra.Sprite(
         {
             x: (width/2)-8,
             y: height-50,
             image: kontra.imageAssets.a
         });
+    */
+
+   var runner_sprite = kontra.Sprite(
+    {
+        x: (width/2)-8,
+        y: height-50,
+        animations: spriteSheet.animations
+    });
 
     var ground = kontra.Sprite(
         {
@@ -37,14 +56,24 @@ kontra.load('a.png', 'tomato.png').then(function()
     // global mechanic variables
     y_origin = runner_sprite.y;
     spawner_ground = y_origin;
-    spawner_min = y_origin-8;
-    spawner_med = y_origin-16;
+    //spawner_min = y_origin-8;
+    //spawner_med = y_origin-16;
     spawner_max = y_origin-24;
         
         loop = kontra.GameLoop(
         {
             update: function()
             {
+                if(!isRunning)
+                {
+                    isRunning = true;
+                    //intro dialogue here!!!!
+                }
+                else if(isOver)
+                {
+                    runner_sprite.y = y_origin; //reset runner position
+                    isOver = false;
+                }
 
                 time++;
 
@@ -59,7 +88,7 @@ kontra.load('a.png', 'tomato.png').then(function()
 
 
                 /*
-                //TODO:FIXME
+                //TODO:FIXME DEPRECATED
                 if(kontra.keyPressed('down')) // SLIDE
                 {
                     
@@ -80,12 +109,12 @@ kontra.load('a.png', 'tomato.png').then(function()
                 }
                 else if(runner_sprite.y == y_origin) //TOUCHED GROUND
                 {
-                    jump_cooloff();
+                    jump_cooloff(runner_sprite);
                 }
 
                 if(time%spawn_period == 0)
                 {
-                    score+=5;
+                    score++;
                     var obstacle = spawn_obstacle();
                     obstacles.push(obstacle);
                 }
@@ -93,14 +122,18 @@ kontra.load('a.png', 'tomato.png').then(function()
                 runner_sprite.update();
                 ground.update();
 
-                obstacles.forEach(function(obstacle) 
+                obstacles.forEach(function(obstacle, index) 
                 {
                     obstacle.update();
 
                     if(obstacle.collidesWith(runner_sprite))
                     {
-                        loop.stop();
-                        text_box.innerHTML = "DEAD!";
+                        screen_write(2);
+                    }
+                    else if(obstacle.x >= width+obstacle.width)
+                    {
+                        count_score(obstacle);
+                        obstacles.splice(index,1);
                     }
                 });
 
@@ -131,16 +164,27 @@ kontra.load('a.png', 'tomato.png').then(function()
 });
 
 
-///////////////////////////////////////////////// TODO
-document.onkeypress = start_game();
+// Start Screen
 
-function start_game()
+document.addEventListener('keyup',function(k){start_game(k);});
+
+function start_game(k)
 {
-    console.log("whaaat");
-    if(isLoaded)
+    //console.log(k.code);
+    if(isLoaded && !isRunning && k.code =="Enter")
     {
+        canvas.style.backgroundColor = "lightblue";
+        text_box.innerHTML = "";
         loop.start();
     }
+    else if(isLoaded && isOver && k.code =="Enter")
+    {
+        canvas.style.backgroundColor = "lightblue";
+        text_box.innerHTML = "";
+        isRunning = false; //just to reset inner text
+        reset();
+    }
 }
+
 
 

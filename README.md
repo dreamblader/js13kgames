@@ -1,11 +1,11 @@
 WIP
 
 TODO LIST:
-* [ ]  add runner animation
-* [ ] - make a START game function properly
-* [ ] - make a RESET game when u FAIL
-* [ ] - kill obstacle inside vector if they get to the end of the screen
-* [ ] - spawn only ground objects [differ from sprites]
+* [x]  add runner animation
+* [x] - make a START game function properly
+* [x] - make a RESET game when u FAIL
+* [x] - kill obstacle inside vector if they get to the end of the screen
+* [x] - spawn only ground objects [differ from sprites]
 * [ ] - add title screnn + flavor text + songs and etc...
 
 --- FULL GAME ---
