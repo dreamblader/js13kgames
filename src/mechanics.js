@@ -39,35 +39,44 @@ function slide()
     }
 };
 
-function spawn_obstacle()
+function spawn_obstacle(num)
 {
     var choice = getRandomInt(1,3);
     console.log(choice);
     var image;
+    var spawn = spawner_ground;
     var offset = 0;
 
-    switch (choice) 
+    if(num==0)
     {
-        case 1:
-            image = kontra.imageAssets.rock;
-            offset = 8;
-            break;
-        case 2:
-            image = kontra.imageAssets.cactus;
-            offset = 0;
-            break;
-        case 3:
-            image = kontra.imageAssets.totem;
-            offset = -8;
-            break;   
-        default:
-            break;
+        switch (choice) 
+        {
+            case 1:
+                image = kontra.imageAssets.rock;
+                offset = 8;
+                break;
+            case 2:
+                image = kontra.imageAssets.cactus;
+                offset = 0;
+                break;
+            case 3:
+                image = kontra.imageAssets.totem;
+                offset = -8;
+                break;   
+            default:
+                break;
+        }
+    }
+    else if(num==1)
+    {
+        spawn = spawner_max;
+        image = kontra.imageAssets.coin;
     }
 
     var sprite = kontra.Sprite(
         {
             x: -16,
-            y: spawner_ground+offset,
+            y: spawn+offset,
             dx: game_speed,
             image: image
         });
@@ -78,6 +87,7 @@ function spawn_obstacle()
 function count_score(item)
 {
     var image = item.image;
+    isScoreChecked = false;
 
     switch(image)
     {
@@ -90,6 +100,36 @@ function count_score(item)
         case kontra.imageAssets.totem:
             score+=5;
             break;
+        case kontra.imageAssets.coin:
+            score+=10;
+            break;
+    }
+};
+
+function check_score()
+{
+    if(!isScoreChecked)
+    {
+        isScoreChecked = true;
+        if(score > 10*difficulty_level)
+        {
+            level_up();
+        }
+    }
+};
+
+function level_up()
+{
+    difficulty_level++;
+
+    if(spawn_period > min_period)
+    {
+        spawn_period-=5;
+    }
+
+    if(game_speed<max_speed && difficulty_level%3 == 0)
+    {
+        game_speed+= 0.5;
     }
 };
 
@@ -114,25 +154,79 @@ function screen_write(num)
         case 2: // GAME OVER
             loop.stop();
             text_box.innerHTML = over_text1+score+over_text2;
+            /*
             context.clearRect(0, 0, width, height);
             context.fillText("GAME ", 33, 50);
             context.fillText("OVER" , 35, 70);
+            */
             isOver = true;
             break;
     }
-}
+};
 
 function reset()
 {
+    time = 0;
     score = 0;
+    difficulty_level =1;
+    spawn_period = 300;
+    game_speed = 1;
+
+    collects = [];
     obstacles = [];
     loop.start();
-}
+};
 
+async function talk(text)
+{
+    var display= "";
+
+    for(var i=0; i<text.length; i++)
+    {
+        display += text.charAt(i);
+        text_box.innerHTML = display;
+    }
+    
+};
+
+function talk_decision()
+{
+    var old_text = text_box.innerHTML;
+
+    if(old_text == dialogue_intro1)
+    {
+        talk(dialogue_intro2);
+    }
+    else if(old_text == dialogue_intro2)
+    {
+        talk(dialogue_intro3);
+    }
+    else
+    {
+        var random = getRandomInt(1,4);
+
+        switch(random)
+        {
+            case 1:
+                talk(dialogue1);
+                break;
+            case 2:
+                talk(dialogue2);
+                break;
+            case 3:
+                talk(dialogue3);
+                break;
+            case 4:
+                talk(dialogue4);
+                break;
+        }
+    }
+                        
+};
 
 function getRandomInt(min, max)
 {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+};

@@ -4,7 +4,7 @@ kontra.initKeys();
 kontra.setImagePath('assets/images');
 kontra.setAudioPath('assets/sounds')
 
-kontra.load('run.png','cactus.png','totem.png','rock.png','jumpbro.mid').then(function()
+kontra.load('run.png','cactus.png','totem.png','rock.png', 'coin.png').then(function()
 {
     screen_write(1);
 
@@ -68,6 +68,7 @@ kontra.load('run.png','cactus.png','totem.png','rock.png','jumpbro.mid').then(fu
                 {
                     isRunning = true;
                     //intro dialogue here!!!!
+                    talk(dialogue_intro1);
                 }
                 else if(isOver)
                 {
@@ -112,11 +113,20 @@ kontra.load('run.png','cactus.png','totem.png','rock.png','jumpbro.mid').then(fu
                     jump_cooloff(runner_sprite);
                 }
 
+                if(time%coin_period == 0)
+                {
+                    var collect = spawn_obstacle(1);
+                    collects.push(collect);
+                }
                 if(time%spawn_period == 0)
                 {
                     score++;
-                    var obstacle = spawn_obstacle();
+                    var obstacle = spawn_obstacle(0);
                     obstacles.push(obstacle);
+                }
+                else if(time%talk_period == 0)
+                {
+                    talk_decision();
                 }
                 
                 runner_sprite.update();
@@ -137,21 +147,40 @@ kontra.load('run.png','cactus.png','totem.png','rock.png','jumpbro.mid').then(fu
                     }
                 });
 
+                collects.forEach(function(collect, index) 
+                {
+                    collect.update();
+
+                    if(collect.collidesWith(runner_sprite))
+                    {
+                        count_score(collect);
+                        collects.splice(index,1);
+                    }
+                    else if(collect.x >= width+collect.width)
+                    {
+                        collects.splice(index,1);
+                    }
+                });
+
                 score_html.innerHTML = score;
+                check_score();
             },
         
             render: function()
             {  
                 ground.render();
                 runner_sprite.render();
+
                 if(obstacles.length > 0)
                 {
                     for(i=0;i<obstacles.length;i++)
                     obstacles[i].render();
-                    //obstacles.array.forEach(function(obstacle) 
-                    //{
-                    //    obstacle.render();
-                    //});
+                }
+
+                if(collects.length > 0)
+                {
+                    for(i=0;i<collects.length;i++)
+                    collects[i].render();
                 }
             }
         });
