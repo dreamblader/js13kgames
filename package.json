@@ -9,6 +9,8 @@
   "author": "Carlos Monnazzi (Dreamblader)",
   "license": "ISC",
   "dependencies": {
-    "kontra": "^6.5.0"
+    "gulp": "^4.0.2",
+    "kontra": "^6.5.0",
+    "midi.js": "^0.3.1"
   }
 }

@@ -17,13 +17,13 @@ var dialogue_intro3 =
 "If I run backwards I can get there faster! Trust me";
 
 var dialogue1 =
-"What a beatiful day!"
+"What a beatiful day!";
 
 var dialogue2 =
-"Are we there yet?"
+"Are we there yet?";
 
 var dialogue3 =
-"Sometimes I can't feel my legs"
+"Sometimes I can't feel my legs";
 
 var dialogue4 =
-"I can't see where I'm going."
+"I can't see where I'm going.";
